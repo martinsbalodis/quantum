@@ -9,6 +9,8 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch:      noarch
 Requires:       python python-sqlalchemy
 
+%define _unpackaged_files_terminate_build 0
+
 %description
 OVS Quantum Agent
 
