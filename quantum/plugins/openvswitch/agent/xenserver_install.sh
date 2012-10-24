@@ -12,7 +12,11 @@ rpm -Uvh http://dl.fedoraproject.org/pub/epel/5/i386/epel-release-5-4.noarch.rpm
 
 if [ "$1" == "with_python_2.6" ] ; then
     yum --enablerepo=base -y install mx
-    yum --enablerepo=epel -y install python26 python26-sqlalchemy python26-mysqldb
+    yum --enablerepo=epel -y install python26 python26-sqlalchemy python26-mysqldb python26-eventlet
+    
+    easy_install-2.6 iso8601
+    easy_install-2.6 PasteDeploy
+    easy_install-2.6 netaddr
 else
     yum --enablerepo=epel -y install python-sqlalchemy
     yum --enablerepo=base -y install MySQL-python

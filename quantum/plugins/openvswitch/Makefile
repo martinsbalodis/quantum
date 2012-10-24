@@ -17,7 +17,7 @@ agent-dist-xen-python26:QUANTUM_LIBS=$(AGENT_DIST_DIR)/build/ovs-quantum-agent-$
 agent-dist-xen agent-dist-xen-python26: distclean
 	yum --enablerepo=base install rpm-build
 	mkdir -p $(XAPI_PLUGINS_DIR)
-	mkdir -p $(QUANTUM_LIBS)/{quantum/plugins/openvswitch/common,quantum/openstack/common,quantum/openstack/common/rpc}
+	mkdir -p $(QUANTUM_LIBS)/{quantum/plugins/openvswitch/common,quantum/common,quantum/openstack/common,quantum/api}
 	mkdir -p $(QUANTUM_LIBS)/quantum/agent/linux
 	mkdir -p $(RPM_BUILD_ROOT)/BUILD $(RPM_BUILD_ROOT)/SOURCES
 	mkdir -p $(RPM_BUILD_ROOT)/SRPMS $(RPM_BUILD_ROOT)/RPMS $(RPM_BUILD_ROOT)/SPECS
@@ -27,7 +27,7 @@ agent-dist-xen agent-dist-xen-python26: distclean
 	sed -i "s/VERSION/$(VERSION)/" $(AGENT_DIST_DIR)/ovs-quantum-agent-xs_xcp.spec
 	cp README $(AGENT_DIST_DIR)
 	cp ../../../etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini $(XAPI_PLUGINS_DIR)
-	cp ../../agent/{rpc.py} $(QUANTUM_LIBS)/quantum/agent
+	cp ../../agent/rpc.py $(QUANTUM_LIBS)/quantum/agent
 	cp ../../agent/linux/{ovs_lib.py,utils.py,__init__.py,ip_lib.py,utils.py} $(QUANTUM_LIBS)/quantum/agent/linux
 	test -d $(AGENT_DIST_DIR)/build/ovs-quantum-agent-$(VERSION)/usr/lib/python2.6/site-packages && \
 		sed -i 's/Requires:.*/Requires:	   python26 python26-sqlalchemy python26-mysqldb/' \
@@ -38,10 +38,12 @@ agent-dist-xen agent-dist-xen-python26: distclean
 	cp ../../agent/__init__.py $(QUANTUM_LIBS)/quantum/agent/
 	cp ../__init__.py $(QUANTUM_LIBS)/quantum/plugins/
 	cp __init__.py $(QUANTUM_LIBS)/quantum/plugins/openvswitch/
-	cp common/{config.py,__init__.py,constants.py,topics.py} $(QUANTUM_LIBS)/quantum/plugins/openvswitch/common/
+	cp common/{config.py,__init__.py,constants.py} $(QUANTUM_LIBS)/quantum/plugins/openvswitch/common/
+	cp ../../common/* $(QUANTUM_LIBS)/quantum/common/
 	cp ../../openstack/__init__.py $(QUANTUM_LIBS)/quantum/openstack/
-	cp ../../openstack/common/{cfg.py,iniparser.py,__init__.py,context.py,rpc.py} $(QUANTUM_LIBS)/quantum/openstack/common/
-	cp ../../openstack/common/rpc/{__init__.py,dispatcher.py} $(QUANTUM_LIBS)/quantum/openstack/common/rpc
+	cp -r ../../openstack/common/* $(QUANTUM_LIBS)/quantum/openstack/common/
+	cp -r ../../api/* $(QUANTUM_LIBS)/quantum/api/
+	cp ../../version.py $(QUANTUM_LIBS)/quantum/
 	tar -czvpf ${RPM_BUILD_ROOT}/SOURCES/ovs-quantum-agent-${VERSION}.tgz -C $(AGENT_DIST_DIR)/build ovs-quantum-agent-${VERSION}
 	rpmbuild -ba --define "_topdir $(shell pwd)/$(RPM_BUILD_ROOT)" --clean $(AGENT_DIST_DIR)/ovs-quantum-agent-xs_xcp.spec
 	@echo "Agent package created: ovs_quantum_agent/build/rpm/RPMS/noarch/ovs-quantum-agent-${VERSION}-1.noarch.rpm"
